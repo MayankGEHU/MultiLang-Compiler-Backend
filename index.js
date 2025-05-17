@@ -5,10 +5,14 @@ const cors = require("cors");
 
 const { generateFile } = require("./generateFile");
 const { executeCpp } = require("./executeCpp");
+const allowedOrigins = [
+  "https://multi-lang-compiler-frontend.vercel.app",
+  "https://multi-lang-compiler-frontend-quaq9mlnr.vercel.app"
+];
 
 const app = express();
 app.use(cors({
-  origin: "https://multi-lang-compiler-frontend-quaq9mlnr.vercel.app",
+  origin: allowedOrigins,
   methods: ["GET", "POST"],
   credentials: true
 }));
@@ -20,7 +24,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://multi-lang-compiler-frontend-quaq9mlnr.vercel.app",  // allow your frontend here
+    origin: allowedOrigins, 
     methods: ["GET", "POST"],
     credentials: true,
   },
