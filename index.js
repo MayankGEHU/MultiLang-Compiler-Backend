@@ -9,7 +9,7 @@ const { executeCpp } = require("./executeCpp");
 const app = express();
 
 const allowedOrigins = [
-  "https://multi-lang-compiler-frontend.vercel.app",
+  "https://multi-lang-compiler-frontend-ef9ispgaw.vercel.app",
   "http://localhost:3000", // local testing
 ];
 
