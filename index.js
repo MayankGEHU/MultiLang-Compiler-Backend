@@ -10,20 +10,19 @@ const app = express();
 
 const allowedOrigins = [
   "https://multi-lang-compiler-frontend.vercel.app",
-  "http://localhost:3000", // for local testing
+  "http://localhost:3000", // local testing
 ];
 
-// Configure CORS for Express
+// Configure CORS for Express REST API
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (like curl or server-to-server)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
-        return callback(new Error(msg), false);
+      if (!origin) return callback(null, true); // allow server-to-server requests, curl, postman etc.
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
-      return callback(null, true);
+      const msg = `CORS policy does not allow access from origin: ${origin}`;
+      return callback(new Error(msg), false);
     },
     methods: ["GET", "POST"],
     credentials: true,
@@ -35,21 +34,22 @@ app.use(express.json());
 
 const server = http.createServer(app);
 
+// Configure Socket.IO with CORS properly
 const io = new Server(server, {
   cors: {
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        return callback(new Error("Not allowed by CORS"));
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
-      return callback(null, true);
+      return callback(new Error("Not allowed by CORS"), false);
     },
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
-// Socket.IO logic remains the same
+// Socket.IO logic
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// API routes
+// REST API routes
 app.get("/", (req, res) => {
   return res.json({ hello: "world" });
 });
