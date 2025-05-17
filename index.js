@@ -8,7 +8,7 @@ const { executeCpp } = require("./executeCpp");
 
 const app = express();
 app.use(cors({
-  origin: "https://multi-lang-compiler-frontend.vercel.app",
+  origin: "https://multi-lang-compiler-frontend-quaq9mlnr.vercel.app",
   methods: ["GET", "POST"],
   credentials: true
 }));
@@ -20,7 +20,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://multi-lang-compiler-frontend.vercel.app",  // allow your frontend here
+    origin: "https://multi-lang-compiler-frontend-quaq9mlnr.vercel.app",  // allow your frontend here
     methods: ["GET", "POST"],
     credentials: true,
   },
