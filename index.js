@@ -7,52 +7,23 @@ const { generateFile } = require("./generateFile");
 const { executeCpp } = require("./executeCpp");
 
 const app = express();
-
-const allowedOrigins = [
-  "https://multi-lang-compiler-frontend-ef9ispgaw.vercel.app",
-  "http://localhost:3000",
-];
-
-// Configure CORS for Express REST API
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // allow server-to-server, Postman etc.
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      const msg = `CORS policy does not allow access from origin: ${origin}`;
-      return callback(new Error(msg), false);
-    },
-    methods: ["GET", "POST", "OPTIONS"],  // include OPTIONS here
-    credentials: true,
-  })
-);
-
-// Handle OPTIONS preflight requests for all routes
-app.options("*", cors());
-
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const server = http.createServer(app);
 
-// Configure Socket.IO with CORS properly
 const io = new Server(server, {
   cors: {
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"), false);
-    },
-    methods: ["GET", "POST", "OPTIONS"],  // include OPTIONS here too
+    origin: "https://multi-lang-compiler-frontend.vercel.app",  // allow your frontend here
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
-// Socket.IO logic
+// ========================
+// 🔌 Socket.IO Logic
+// ========================
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
@@ -71,7 +42,9 @@ io.on("connection", (socket) => {
   });
 });
 
-// REST API routes
+// ========================
+// 🧠 Code Execution Routes
+// ========================
 app.get("/", (req, res) => {
   return res.json({ hello: "world" });
 });
@@ -92,7 +65,8 @@ app.post("/run", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
+
+const PORT = 5000;
 server.listen(PORT, () => {
   console.log(`Server running (HTTP + Socket.IO) on port ${PORT}`);
 });
