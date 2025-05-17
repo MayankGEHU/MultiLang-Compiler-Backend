@@ -7,7 +7,12 @@ const { generateFile } = require("./generateFile");
 const { executeCpp } = require("./executeCpp");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://multi-lang-compiler-frontend.vercel.app",
+  methods: ["GET", "POST"],
+  credentials: true
+}));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
