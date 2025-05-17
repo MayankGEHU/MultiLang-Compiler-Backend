@@ -10,24 +10,27 @@ const app = express();
 
 const allowedOrigins = [
   "https://multi-lang-compiler-frontend-ef9ispgaw.vercel.app",
-  "http://localhost:3000", // local testing
+  "http://localhost:3000",
 ];
 
 // Configure CORS for Express REST API
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // allow server-to-server requests, curl, postman etc.
+      if (!origin) return callback(null, true); // allow server-to-server, Postman etc.
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
       const msg = `CORS policy does not allow access from origin: ${origin}`;
       return callback(new Error(msg), false);
     },
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "OPTIONS"],  // include OPTIONS here
     credentials: true,
   })
 );
+
+// Handle OPTIONS preflight requests for all routes
+app.options("*", cors());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -44,7 +47,7 @@ const io = new Server(server, {
       }
       return callback(new Error("Not allowed by CORS"), false);
     },
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "OPTIONS"],  // include OPTIONS here too
     credentials: true,
   },
 });
